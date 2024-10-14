@@ -105,33 +105,33 @@ class SignupPage {
 
     // Validations
 
-    // Required
-
-    shouldContainFirstNameRequired() {
-        e2e.shouldContainRequired('form-error-firstName')
+    shouldContainFirstNameError(message: string) {
+        e2e.shouldContainError('form-error-firstName', message);
     }
 
-    shouldContainLastNameRequired() {
-        e2e.shouldContainRequired('form-error-lastName')
+    shouldContainLastNameError(message: string) {
+        e2e.shouldContainError('form-error-lastName', message);
     }
 
-    shouldContainEmailRequired() {
-        e2e.shouldContainRequired('form-error-email')
+    shouldContainEmailError(message: string) {
+        e2e.shouldContainError('form-error-email', message);
     }
 
-    shouldContainPhoneNumberRequired() {
-        e2e.shouldContainRequired('form-error-phone')
+    shouldContainPhoneNumberError(message: string) {
+        e2e.shouldContainError('form-error-phone', message);
     }
 
-    shouldContainPasswordRequired() {
-        e2e.shouldContainRequired('form-error-password')
+    shouldContainPasswordError(message: string) {
+        e2e.shouldContainError('form-error-password', message);
     }
 
-    shouldContainConfirmPasswordRequired() {
-        e2e.shouldContainRequired('form-error-passwordConfirm')
+    shouldContainConfirmPasswordError(message: string) {
+        e2e.shouldContainError('form-error-passwordConfirm', message);
     }
 
     // Invalid
+
+    
 
     shouldContainEmailInvalid() {
         cy.getByDataTestId('validation_errors_invalidEmail')

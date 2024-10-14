@@ -16,10 +16,21 @@ class e2e {
         })
     }
 
-    shouldContainRequired(testId: string) {
+    shouldContainError(testId: string, message: string) {
         cy.get(`[data-test-id="${testId}"]`)
-        .find('[data-test-id="validation_errors_isRequired"]')
-        .should('contain.text', 'Required');
+        .contains('span', message);
+    }
+
+    generateRandomStringWithSpecialChars(length: number): string {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+        let result = '';
+      
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          result += characters[randomIndex];
+        }
+      
+        return result;
     }
 }
 
