@@ -25,7 +25,8 @@ describe('Signup Tests', () => {
   });
 
   it('should open sign up form for new account', () => {
-    SignupPage.validateSignUpFormOpen();
+    SignupPage.validateFormOpen();
+    SignupPage.validateFieldLabels();
   });
 
   context('Invalid Signup Tests', () => {
@@ -38,13 +39,15 @@ describe('Signup Tests', () => {
 
     it('should contain first name required', () => {
       const input = requiredTestData[0];
-      SignupPage.fillFormAndSubmit(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+      SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+      SignupPage.submit();
       SignupPage.shouldContainFirstNameRequired();
     });
 
     it('should contain last name required', () => {
       const input = requiredTestData[1];
-      SignupPage.fillFormAndSubmit(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+      SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+      SignupPage.submit();
       SignupPage.shouldContainLastNameRequired();
     });
 
