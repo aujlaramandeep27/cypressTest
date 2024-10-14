@@ -8,8 +8,8 @@ describe('Signup Tests', () => {
     lastName: "test",
     email: "tes@testdotcom",
     phone: "1234567890",
-    password: "Test123456789",
-    confirmPassword: "Test123456789",
+    password: "TestUser1234",
+    confirmPassword: "TestUser123",
     province: "Quebec",
     constent: "false"
   };
@@ -57,7 +57,7 @@ describe('Signup Tests', () => {
     const invalidFirstNames = [firstNameEmpty, firstNameSpace, firstNameShort, firstNameLong, firstNameWithNumbers, firstNameWithSpecialChars];
 
     invalidFirstNames.forEach((input) => {
-      it(`should show error ${input.expectedError}`, () => {
+      it(`Firstname value '${input.firstName}' should show error ${input.expectedError}`, () => {
         SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
         SignupPage.submit();
         SignupPage.shouldContainFirstNameError(input.expectedError);
@@ -94,7 +94,7 @@ describe('Signup Tests', () => {
     const invalidLastNames = [lastNameEmpty, lastNameSpace, lastNameShort, lastNameLong, lastNameWithNumbers, lastNameWithSpecialChars];
 
     invalidLastNames.forEach((input) => {
-      it(`should show error ${input.expectedError}`, () => {
+      it(`Lastname value '${input.lastName}' should show error ${input.expectedError}`, () => {
         SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
         SignupPage.submit();
         SignupPage.shouldContainLastNameError(input.expectedError);
@@ -151,12 +151,154 @@ describe('Signup Tests', () => {
     const invalidEmails = [emailEmpty, emailSpace, emailShort, emailLong, emailWithoutAt, emailWithMultipleAt];
 
     invalidEmails.forEach((input) => {
-      it(`should show error ${input.expectedError}`, () => {
+      it(`Email value '${input.email}' should show error ${input.expectedError}`, () => {
         SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
         SignupPage.submit();
         SignupPage.shouldContainEmailError(input.expectedError);
       });
     });
+  });
+
+  context('Invalid Phone Number Tests', () => {
+
+    let phoneEmpty = JSON.parse(JSON.stringify(testData));
+    phoneEmpty.phone = "";
+    phoneEmpty.expectedError = "Required";
+
+    let phoneSpace = JSON.parse(JSON.stringify(testData));
+    phoneSpace.phone = "{ }";
+    phoneSpace.expectedError = "Required";
+
+    const invalidPhones = [phoneEmpty, phoneSpace];
+
+    invalidPhones.forEach((input) => {
+      it(`Phone number value '${input.phone}' should show error ${input.expectedError}`, () => {
+        SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+        SignupPage.submit();
+        SignupPage.shouldContainPhoneNumberError(input.expectedError);
+      });
+    });
+  });
+
+  context('Non numeric Phone Number Tests', () => {
+
+    let phoneShort = JSON.parse(JSON.stringify(testData));
+    phoneShort.phone = "1";
+    phoneShort.expectedValue = "1__-___-____";
+
+    let phoneLong = JSON.parse(JSON.stringify(testData));
+    phoneLong.phone = "98765432012";
+    phoneLong.expectedValue = "987-654-3201";
+
+    let phoneWithLetters = JSON.parse(JSON.stringify(testData));
+    phoneWithLetters.phone = "1234ABC890";
+    phoneWithLetters.expectedValue = "123-489-0___";
+
+    let phoneWithInvalidChars = JSON.parse(JSON.stringify(testData));
+    phoneWithInvalidChars.phone = "123#456789";
+    phoneWithInvalidChars.expectedValue = "123-456-789_";
+
+    let phoneWithInvalidFormat = JSON.parse(JSON.stringify(testData));
+    phoneWithInvalidFormat.phone = "123/456/7890";
+    phoneWithInvalidFormat.expectedValue = "123-456-7890";
+
+    const phoneCases = [phoneShort, phoneLong, phoneWithLetters, phoneWithInvalidChars, phoneWithInvalidFormat];
+
+    phoneCases.forEach((input) => {
+      it(`Phone number value '${input.phone}' should accept value ${input.expectedValue}`, () => {
+        SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+        SignupPage.submit();
+        SignupPage.shouldHavePhoneNumber(input.expectedValue);
+      });
+    });
+  });
+
+  context('Invalid Password Tests', () => {
+
+    let passwordEmpty = JSON.parse(JSON.stringify(testData));
+    passwordEmpty.password = "";
+    passwordEmpty.expectedError = "Required";
+
+    let passwordSpace = JSON.parse(JSON.stringify(testData));
+    passwordSpace.password = "{ }";
+    passwordSpace.expectedError = "Your password is too weak";
+
+    let passwordShort = JSON.parse(JSON.stringify(testData));
+    passwordShort.password = "TestUser123";
+    passwordShort.expectedError = "Your password is too weak";
+
+    let passwordLong = JSON.parse(JSON.stringify(testData));
+    passwordLong.password = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+    passwordLong.expectedError = "Your password is too weak";
+
+    let passwordNoUpperCase = JSON.parse(JSON.stringify(testData));
+    passwordNoUpperCase.password = "testuser1234";
+    passwordNoUpperCase.expectedError = "Your password is too weak";
+
+    let passwordNoLowerCase = JSON.parse(JSON.stringify(testData));
+    passwordNoLowerCase.password = "TESTUSER1234";
+    passwordNoLowerCase.expectedError = "Your password is too weak";
+
+    let passwordNoNumber = JSON.parse(JSON.stringify(testData));
+    passwordNoNumber.password = "TestUserOneTwo";
+    passwordNoNumber.expectedError = "Your password is too weak";
+
+    const invalidPasswords = [passwordEmpty, passwordSpace, passwordShort, passwordLong, passwordNoUpperCase, passwordNoLowerCase, passwordNoNumber];
+
+    invalidPasswords.forEach((input) => {
+      it(`Password value '${input.password}' should show error ${input.expectedError}`, () => {
+        SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+        SignupPage.submit();
+        SignupPage.shouldContainPasswordError(input.expectedError);
+      });
+    });
+  });
+
+  context('Invalid Confirm Password Tests', () => {
+
+    let confirmPasswordEmpty = JSON.parse(JSON.stringify(testData));
+    confirmPasswordEmpty.confirmPassword = "";
+    confirmPasswordEmpty.expectedError = "Required";
+
+    let confirmPasswordSpace = JSON.parse(JSON.stringify(testData));
+    confirmPasswordSpace.confirmPassword = "{ }";
+    confirmPasswordSpace.expectedError = "Your passwords do not match";
+
+    let confirmPasswordDiff = JSON.parse(JSON.stringify(testData));
+    confirmPasswordDiff.password = "TestUser1234";
+    confirmPasswordDiff.confirmPassword = "TestUser5678";
+    confirmPasswordDiff.expectedError = "Your passwords do not match";
+
+    let confirmPasswordDiffCase = JSON.parse(JSON.stringify(testData));
+    confirmPasswordDiffCase.password = "TestUser1234";
+    confirmPasswordDiffCase.confirmPassword = "Testuser1234";
+    confirmPasswordDiffCase.expectedError = "Your passwords do not match";
+
+    let confirmPasswordAndPasswordEmpty = JSON.parse(JSON.stringify(testData));
+    confirmPasswordAndPasswordEmpty.password = "";
+    confirmPasswordAndPasswordEmpty.confirmPassword = "";
+    confirmPasswordAndPasswordEmpty.expectedError = "Required";
+
+    const invalidConfirmPasswords = [confirmPasswordEmpty, confirmPasswordSpace, confirmPasswordDiff, confirmPasswordDiffCase, confirmPasswordAndPasswordEmpty];
+
+    invalidConfirmPasswords.forEach((input) => {
+      it(`Confirm password value '${input.password}' should show error ${input.expectedError}`, () => {
+        SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+        SignupPage.submit();
+        SignupPage.shouldContainConfirmPasswordError(input.expectedError);
+      });
+    });
+  });
+      
+  it('Unknown province should take default value', () => {
+    let input = JSON.parse(JSON.stringify(testData));
+    input.province = "Unknown";
+    input.expectedValue = "Ontario";
+
+    SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, "", input.constent);
+    SignupPage.typeProvince(input.province);
+    SignupPage.submit();
+    SignupPage.shouldHaveProvince(input.expectedValue);
   });
     
 });

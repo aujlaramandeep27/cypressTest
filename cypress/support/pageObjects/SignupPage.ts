@@ -59,8 +59,16 @@ class SignupPage {
         e2e.clearAndFillField("phone", phoneNumber);
     }
 
+    shouldHavePhoneNumber(expectedvalue: string) {
+        e2e.getByTestId("phone").should('have.value', expectedvalue);
+    }
+
     fillPassword(password: string) {
         e2e.clearAndFillField("password", password);
+    }
+
+    shouldHavePassword(expectedvalue: string) {
+        e2e.getByTestId("password").should('have.value', expectedvalue);
     }
 
     fillConfirmPassword(passwordConfirm: string) {
@@ -68,10 +76,22 @@ class SignupPage {
     }
 
     selectProvince(province: string) {
-        cy.get('[data-test-id="province"]').within(() => {
-            cy.get('.react-select__control').click();
-            cy.get('.react-select__menu').contains(province).click();
-        })
+        if(province != "") {
+            cy.get('[data-test-id="province"]').within(() => {
+                cy.get('.react-select__control').click();
+                cy.get('.react-select__menu').contains(province).click();
+            })
+        }
+    }
+
+    typeProvince(province: string) {
+        e2e.getByTestId("province").type(province);
+    }
+
+    shouldHaveProvince(expectedvalue: string) {
+        e2e.getByTestId("province")
+        .find('.react-select__single-value')
+        .should('contain', expectedvalue);
     }
 
     constentAgreement(agree: string) {
