@@ -21,6 +21,18 @@ class e2e {
         .contains('span', message);
     }
 
+    generateRandomString(length: number): string {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+      
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          result += characters[randomIndex];
+        }
+      
+        return result;
+    }
+
     generateRandomStringWithSpecialChars(length: number): string {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
         let result = '';
@@ -31,6 +43,15 @@ class e2e {
         }
       
         return result;
+    }
+
+    lowercaseExceptFirst(str: string): string {
+        if (str.length === 0) return str; // Handle empty string
+        
+        const firstChar = str.charAt(0).toUpperCase(); // Uppercase the first character
+        const restOfString = str.slice(1).toLowerCase(); // Lowercase the rest of the string
+        
+        return firstChar + restOfString; // Concatenate and return
     }
 }
 

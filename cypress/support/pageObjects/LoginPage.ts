@@ -1,14 +1,33 @@
-class LoginPage {
-    visit() {
-      cy.visit('/login');
-    }
+import e2e from '../e2e';
 
-    signup() {
-      cy.get('[data-test-id="loginPage_signUp"]')
-      .contains('span', 'Sign up')
-      .click();
-    }
+class LoginPage {
+  readonly pathName : string;
+
+  constructor(pathName: string) {
+      this.pathName = `/${pathName}`;
   }
   
-  export default new LoginPage();
+  visit() {
+    cy.visit(this.pathName);
+  }
+
+  signup() {
+    e2e.getByTestId('loginPage_signUp')
+    .contains('span', 'Sign up')
+    .click();
+  }
+
+  validateFormOpen() {
+    cy.location("pathname").should("equal", this.pathName)
+
+    // Log in to your nesto account form
+    e2e.getByTestId('cardComponent_undefined')
+    .should('contain', 'Log in to your account');
+
+    // Logo
+    e2e.getByTestId('nestoSecured').should('be.visible');
+  }
+}
+  
+export default new LoginPage("login");
   

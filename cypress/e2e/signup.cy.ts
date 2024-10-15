@@ -1,3 +1,4 @@
+import { STATUS_CODES } from 'http';
 import e2e from '../support/e2e';
 import LoginPage from '../support/pageObjects/LoginPage';
 import SignupPage from '../support/pageObjects/SignupPage';
@@ -26,6 +27,121 @@ describe('Signup Tests', () => {
   it('should open sign up form for new account', () => {
     SignupPage.validateFormOpen();
     SignupPage.validateFieldLabels();
+  });
+
+  context.only('Valid Test Cases', () => {
+
+    let case1 = JSON.parse(JSON.stringify(testData));
+    case1.name = 'case1';
+    case1.firstName = `Dré-${e2e.generateRandomStringWithSpecialChars(5)}`;
+    case1.lastName = `Céleste-${e2e.generateRandomStringWithSpecialChars(5)}`;
+    case1.email = `${e2e.generateRandomString(5)}+${e2e.generateRandomString(5)}@test.com`;
+    case1.phone = '1234567890';
+    case1.expectedPhone = '123-456-7890'
+    case1.password = 'TestUser@1234';
+    case1.confirmPassword = case1.password;
+    case1.province = "";
+    case1.expectedProvince = "ON";
+    case1.constent = "true";
+
+    let case2 = JSON.parse(JSON.stringify(case1));
+    case2.name = 'case2';
+    case2.firstName = `André-${e2e.generateRandomStringWithSpecialChars(5)}`;
+    case2.lastName = `^Céleste-${e2e.generateRandomStringWithSpecialChars(5)}`;
+    case2.email = `${e2e.generateRandomString(10)}@test.user.com`;
+    case2.phone = '123 456 7890';
+    case2.province = "Quebec"
+    case2.expectedProvince = "QC";
+    case2.Consent = "false";
+
+    let case3 = JSON.parse(JSON.stringify(case1));
+    case3.name = 'case3';
+    case3.firstName = `^Dré-${e2e.generateRandomStringWithSpecialChars(5)}`;
+    case3.lastName = `Émilie-${e2e.generateRandomStringWithSpecialChars(5)}`;
+    case3.email = `${e2e.generateRandomString(10)}@test.user.com`;
+    case3.province = "Saskatchewan"
+    case3.expectedProvince = "SK";
+    case3.Consent = "false";
+
+    let case4 = JSON.parse(JSON.stringify(case1));
+    case4.name = 'case4';
+    case4.firstName = `^André-${e2e.generateRandomStringWithSpecialChars(5)}`;
+    case4.lastName = `^Émilie-${e2e.generateRandomStringWithSpecialChars(5)}`;
+    case4.email = `${e2e.generateRandomString(10)}@test.user.com`;
+    case4.province = "Alberta"
+    case4.expectedProvince = "AL";
+    case4.Consent = "false";
+    
+    const validCases = [case1, case2, case3, case4];
+
+    validCases.forEach((input) => {
+      it(`Valid case '${input.name}' should be successful`, () => {
+        // Intercept API call
+        cy.intercept('POST', '/api/accounts', (req) => {
+          req.reply({
+            statusCode: 201,
+            body: {
+              firstName: req.body.firstName,
+              lastName: req.body.lastName,
+              email: req.body.email,
+              phone: req.body.phone,
+              password: req.body.password,
+              passwordConfirm: req.body.passwordConfirm,
+              province: req.body.province,
+              consent: req.body.consent,
+            },
+          });
+        }).as(`${input.name}`);
+        
+        SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+        SignupPage.submit();
+
+        // Wait for API response
+        cy.wait(`@${input.name}`).its('response').then((response) => {
+          // Assert the response status
+          expect(response?.statusCode).to.eq(201);
+    
+          // Assert the response body
+          console.log(response.body);
+          expect(response?.body).to.have.property('firstName', e2e.lowercaseExceptFirst(input.firstName));
+          expect(response?.body).to.have.property('lastName', e2e.lowercaseExceptFirst(input.lastName))
+          expect(response?.body).to.have.property('email', input.email);
+          expect(response?.body).to.have.property('phone', input.expectedPhone);
+          expect(response?.body).to.have.property('password', input.password);
+          expect(response?.body).to.have.property('passwordConfirm', input.confirmPassword);
+          expect(response?.body).to.have.property('province', input.expectedProvince);
+        });
+
+      });
+    });
+
+    
+  });
+
+  it('should not allow to use already registered email', () => {
+    let input = JSON.parse(JSON.stringify(testData));
+    input.firstName = e2e.generateRandomStringWithSpecialChars(10);
+    input.lastName = e2e.generateRandomStringWithSpecialChars(10);
+    input.email = `${e2e.generateRandomString(10)}@test.com`;
+    input.phone = '1234567890';
+    input.password = 'TestUser@1234';
+    input.confirmPassword = input.password;
+    input.province = "";
+    input.constent = "false";
+
+    SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+    SignupPage.submit();
+
+    cy.visit(SignupPage.pathName);
+    SignupPage.validateFormOpen();
+
+    let input2 = JSON.parse(JSON.stringify(input));
+    input2.firstName = e2e.generateRandomStringWithSpecialChars(10);
+    input2.lastName = e2e.generateRandomStringWithSpecialChars(10);
+
+    SignupPage.fillForm(input2.firstName, input2.lastName, input2.email, input2.phone, input2.password, input2.confirmPassword, input2.province, input2.constent);
+    SignupPage.submit();
+    cy.get('#toasts_duplicateAccount_message').should('be.visible');
   });
 
   context('Invalid First Name Tests', () => {
@@ -117,7 +233,7 @@ describe('Signup Tests', () => {
     emailShort.expectedError = "Invalid email address";
 
     let emailLong = JSON.parse(JSON.stringify(testData));
-    emailLong.email = `${e2e.generateRandomStringWithSpecialChars(247)}@test.com`;
+    emailLong.email = `${e2e.generateRandomString(247)}@test.com`;
     emailLong.expectedError = "Invalid email address";
 
     let emailWithoutAt = JSON.parse(JSON.stringify(testData));
@@ -299,6 +415,44 @@ describe('Signup Tests', () => {
     SignupPage.typeProvince(input.province);
     SignupPage.submit();
     SignupPage.shouldHaveProvince(input.expectedValue);
+  });
+
+  it('should validate when submit without filling form', () => {
+    SignupPage.submit();
+    SignupPage.shouldContainFirstNameError("Required");
+    SignupPage.shouldContainLastNameError("Required");
+    SignupPage.shouldContainEmailError("Required");
+    SignupPage.shouldContainPhoneNumberError("Required");
+    SignupPage.shouldContainPasswordError("Required");
+    SignupPage.shouldContainConfirmPasswordError("Required");
+
+    SignupPage.validateFormOpen();
+  });
+
+  it('should reset fields when reload page', () => {
+    let input = JSON.parse(JSON.stringify(testData));
+
+    SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+    SignupPage.submit();
+    cy.reload();
+    SignupPage.validateFormOpen();
+    SignupPage.validateFieldAreReset();
+  });
+
+  it('should reset fields when go back and forth on page', () => {
+    let input = JSON.parse(JSON.stringify(testData));
+
+    SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+    SignupPage.submit();
+    cy.go('back');
+    cy.go('forward');
+    SignupPage.validateFormOpen();
+    SignupPage.validateFieldAreReset();
+  });
+
+  it('should navigate to Login page', () => {
+    SignupPage.login();
+    LoginPage.validateFormOpen();
   });
     
 });

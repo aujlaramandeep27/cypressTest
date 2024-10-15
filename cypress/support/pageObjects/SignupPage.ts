@@ -8,11 +8,17 @@ class SignupPage {
         this.pathName = `/${pathName}`;
     }
 
+    login() {
+        e2e.getByTestId('login-link')
+        .contains('span', 'Log in')
+        .click();
+    }
+
     validateFormOpen() {
         cy.location("pathname").should("equal", this.pathName)
 
         // Create nesto account form
-        cy.get('[data-test-id="form_signup_title"]')
+        e2e.getByTestId('form_signup_title')
         .should('contain', 'Create a nesto account');
 
         // Logo
@@ -41,6 +47,17 @@ class SignupPage {
 
         // Read Policy text
         e2e.getByTestId("readOurPolicy_V2").should('contain', 'Read our Privacy Policy to learn more.');
+    }
+
+    validateFieldAreReset() {
+        e2e.getByTestId("firstName").should('have.value', '');
+        e2e.getByTestId("lastName").should('have.value', '');
+        e2e.getByTestId("email").should('have.value', '');
+        e2e.getByTestId("phone").should('have.value', '');
+        e2e.getByTestId("password").should('have.value', '');
+        e2e.getByTestId("passwordConfirm").should('have.value', '');
+        e2e.getByTestId("province").contains('div', 'Ontario');
+        cy.get('[data-test-id="leadDistributeConsentAgreement"]').should('not.be.checked');
     }
 
     fillFirstName(firstName: string) {
