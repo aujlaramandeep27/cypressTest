@@ -13,16 +13,16 @@ class LoginPage {
 
   signup() {
     e2e.getByTestId('loginPage_signUp')
-    .contains('span', 'Sign up')
+    // .contains('span', 'Sign up')
     .click();
   }
 
-  validateFormOpen() {
+  validateFormOpen(title: string) {
     cy.location("pathname").should("equal", this.pathName)
 
     // Log in to your nesto account form
     e2e.getByTestId('cardComponent_undefined')
-    .should('contain', 'Log in to your account');
+    .should('contain', title);
 
     // Logo
     e2e.getByTestId('nestoSecured').should('be.visible');

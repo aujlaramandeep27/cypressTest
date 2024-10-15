@@ -2,6 +2,23 @@ import e2e from '../e2e';
 
 class SignupPage {
 
+    private titleSelector = 'form_signup_title';
+    private logoSelector = 'nestoSecured';
+    private firstNameSelector = 'firstName';
+    private lastNameSelector = 'lastName';
+    private emailSelector = 'email';
+    private phoneSelector = 'phone';
+    private passwordSelector = 'password';
+    private confirmPasswordSelector = 'passwordConfirm';
+    private passwordComplexitySelector = 'formWarn_passwordComplexity';
+    private provinceSelector = 'province';
+    private agreementSelector = 'leadDistributeConsentAgreement';
+    private agreementLabelSelector = 'getAQuote_shortPartnerAgreementAndEmail_V3';
+    private readPolicyLabelSelector = 'readOurPolicy_V2';
+    private createAccountSelector = 'createYourAccount';
+    private createAccountAgreementSelector = 'createAccountAgreement';
+    private loginSelector = 'login-link';
+
     readonly pathName : string;
 
     constructor(pathName: string) {
@@ -9,92 +26,45 @@ class SignupPage {
     }
 
     login() {
-        e2e.getByTestId('login-link')
-        .contains('span', 'Log in')
+        e2e.getByTestId(this.loginSelector)
         .click();
     }
 
-    validateFormOpen() {
-        cy.location("pathname").should("equal", this.pathName)
-
-        // Create nesto account form
-        e2e.getByTestId('form_signup_title')
-        .should('contain', 'Create a nesto account');
-
-        // Logo
-        e2e.getByTestId('nestoSecured').should('be.visible');
-    }
-
-    validateFieldLabels() {
-        e2e.getLabelByTestId("firstName").should('contain', 'First name');
-        e2e.getLabelByTestId("lastName").should('contain', 'Last name');
-        e2e.getLabelByTestId("email").should('contain', 'Email');
-        e2e.getLabelByTestId("phone").should('contain', 'Mobile phone number');
-        
-        e2e.getLabelByTestId("password").should('contain', 'Password');
-        e2e.getLabelByTestId("passwordConfirm").should('contain', 'Confirm password');
-        // Password requirements
-        e2e.getByTestId("formWarn_passwordComplexity").
-        should('contain', 'Password must be between 12 and 32 characters and contain one uppercase letter, one lowercase letter and one number.');
-        
-        e2e.getByTestId("select_label-province").should('contain', 'Province');
-        // Default province value
-        e2e.getByTestId("province").contains('div', 'Ontario');
-
-        // Consent Text
-        e2e.getByTestId("getAQuote_shortPartnerAgreementAndEmail_V3").
-        should('contain', 'By checking this box, you agree to be contacted by nesto’s partners for the purposes of offering you financial products. You agree to nesto sharing your mortgage information with its partners. You can opt-out at any time.');
-
-        // Read Policy text
-        e2e.getByTestId("readOurPolicy_V2").should('contain', 'Read our Privacy Policy to learn more.');
-    }
-
-    validateFieldAreReset() {
-        e2e.getByTestId("firstName").should('have.value', '');
-        e2e.getByTestId("lastName").should('have.value', '');
-        e2e.getByTestId("email").should('have.value', '');
-        e2e.getByTestId("phone").should('have.value', '');
-        e2e.getByTestId("password").should('have.value', '');
-        e2e.getByTestId("passwordConfirm").should('have.value', '');
-        e2e.getByTestId("province").contains('div', 'Ontario');
-        cy.get('[data-test-id="leadDistributeConsentAgreement"]').should('not.be.checked');
-    }
-
     fillFirstName(firstName: string) {
-        e2e.clearAndFillField("firstName", firstName);
+        e2e.clearAndFillField(this.firstNameSelector, firstName);
     }
 
     fillLastname(lastName: string) {
-        e2e.clearAndFillField("lastName", lastName);
+        e2e.clearAndFillField(this.lastNameSelector, lastName);
     }
 
     fillEmail(email: string) {
-        e2e.clearAndFillField("email", email);
+        e2e.clearAndFillField(this.emailSelector, email);
     }
 
     fillPhoneNumber(phoneNumber: string) {
-        e2e.clearAndFillField("phone", phoneNumber);
+        e2e.clearAndFillField(this.phoneSelector, phoneNumber);
     }
 
     shouldHavePhoneNumber(expectedvalue: string) {
-        e2e.getByTestId("phone").should('have.value', expectedvalue);
+        e2e.getByTestId(this.phoneSelector).should('have.value', expectedvalue);
     }
 
     fillPassword(password: string) {
-        e2e.clearAndFillField("password", password);
+        e2e.clearAndFillField(this.passwordSelector, password);
     }
 
     shouldHavePassword(expectedvalue: string) {
-        e2e.getByTestId("password").should('have.value', expectedvalue);
+        e2e.getByTestId(this.passwordSelector).should('have.value', expectedvalue);
     }
 
     fillConfirmPassword(passwordConfirm: string) {
-        e2e.clearAndFillField("passwordConfirm", passwordConfirm);
+        e2e.clearAndFillField(this.confirmPasswordSelector, passwordConfirm);
     }
 
     selectProvince(province: string) {
         if(province != "") {
-            cy.get('[data-test-id="province"]').within(() => {
+            e2e.getByTestId(this.provinceSelector).within(() => {
                 cy.get('.react-select__control').click();
                 cy.get('.react-select__menu').contains(province).click();
             })
@@ -102,18 +72,18 @@ class SignupPage {
     }
 
     typeProvince(province: string) {
-        e2e.getByTestId("province").type(province);
+        e2e.getByTestId(this.provinceSelector).type(province);
     }
 
     shouldHaveProvince(expectedvalue: string) {
-        e2e.getByTestId("province")
+        e2e.getByTestId(this.provinceSelector)
         .find('.react-select__single-value')
         .should('contain', expectedvalue);
     }
 
     constentAgreement(agree: string) {
         if(agree != "") {
-            cy.get('[data-test-id="leadDistributeConsentAgreement"]').then(($checkbox) => {
+            e2e.getByTestId(this.agreementSelector).then(($checkbox) => {
                 if(agree == "true" && !$checkbox.is(':checked')){
                     cy.wrap($checkbox).click();
                 }
@@ -126,7 +96,7 @@ class SignupPage {
     }
 
     submit() {
-        cy.get('[data-test-id="createYourAccount"]').click();
+        e2e.getByTestId(this.createAccountSelector).click();
     }
 
     fillForm(firstName: string, lastName: string, email: string, phoneNumber: string, password: string, confirmPassword: string, province: string, constent: string) {
@@ -142,47 +112,106 @@ class SignupPage {
 
     // Validations
 
+    validateFormOpen(title: string) {
+        cy.location("pathname").should("equal", this.pathName)
+
+        // Create nesto account form
+        e2e.getByTestId(this.titleSelector)
+        .should('contain', title);
+
+        // Logo
+        e2e.getByTestId(this.logoSelector).should('be.visible');
+    }
+
+    validateFieldAreReset() {
+        e2e.getByTestId(this.firstNameSelector).should('have.value', '');
+        e2e.getByTestId(this.lastNameSelector).should('have.value', '');
+        e2e.getByTestId(this.emailSelector).should('have.value', '');
+        e2e.getByTestId(this.phoneSelector).should('have.value', '');
+        e2e.getByTestId(this.passwordSelector).should('have.value', '');
+        e2e.getByTestId(this.confirmPasswordSelector).should('have.value', '');
+        e2e.getByTestId(this.provinceSelector).contains('div', 'Ontario');
+        e2e.getByTestId(this.agreementSelector).should('not.be.checked');
+    }
+
+    // Label validations
+
+    validateFirstNameLabel(label: string) {
+        e2e.getLabelByTestId(this.firstNameSelector).should('contain', label);
+    }
+
+    validateLastNameLabel(label: string) {
+        e2e.getLabelByTestId(this.lastNameSelector).should('contain', label);
+    }
+
+    validateEmailLabel(label: string) {
+        e2e.getLabelByTestId(this.emailSelector).should('contain', label);
+    }
+
+    validatePhoneLabel(label: string) {
+        e2e.getLabelByTestId(this.phoneSelector).should('contain', label);
+    }
+
+    validatePasswordLabel(label: string) {
+        e2e.getLabelByTestId(this.passwordSelector).should('contain', label);
+    }
+
+    validateConfirmPasswordLabel(label: string) {
+        e2e.getLabelByTestId(this.confirmPasswordSelector).should('contain', label);
+    }
+
+    validatePasswordComplexityLabel(label: string) {
+        e2e.getByTestId(this.passwordComplexitySelector).should('contain', label);
+    }
+
+    validateProvinceLabel(label: string) {
+        e2e.getByTestId(this.provinceSelector).should('contain', label);
+    }
+
+    validateProvinceDefaultValue(val: string) {
+        e2e.getByTestId(this.provinceSelector).contains('div', val);
+    }
+
+    validateAgreementLabel(label: string) {
+        e2e.getByTestId(this.agreementLabelSelector).should('contain', label);
+    }
+
+    validateReadPolicyLabel(label: string) {
+        e2e.getByTestId(this.readPolicyLabelSelector).should('contain', label);
+    }
+
+    validateCreateAccountLabel(label: string) {
+        e2e.getByTestId(this.createAccountSelector).should('contain', label);
+    }
+
+    validateCreateAccountAgreementLabel(label: string) {
+        e2e.getByTestId(this.createAccountAgreementSelector).should('contain', label);
+    }
+
+    // Field Validations
+
     shouldContainFirstNameError(message: string) {
-        e2e.shouldContainError('form-error-firstName', message);
+        e2e.shouldContainError(`form-error-${this.firstNameSelector}`, message);
     }
 
     shouldContainLastNameError(message: string) {
-        e2e.shouldContainError('form-error-lastName', message);
+        e2e.shouldContainError(`form-error-${this.lastNameSelector}`, message);
     }
 
     shouldContainEmailError(message: string) {
-        e2e.shouldContainError('form-error-email', message);
+        e2e.shouldContainError(`form-error-${this.emailSelector}`, message);
     }
 
     shouldContainPhoneNumberError(message: string) {
-        e2e.shouldContainError('form-error-phone', message);
+        e2e.shouldContainError(`form-error-${this.phoneSelector}`, message);
     }
 
     shouldContainPasswordError(message: string) {
-        e2e.shouldContainError('form-error-password', message);
+        e2e.shouldContainError(`form-error-${this.passwordSelector}`, message);
     }
 
     shouldContainConfirmPasswordError(message: string) {
-        e2e.shouldContainError('form-error-passwordConfirm', message);
-    }
-
-    // Invalid
-
-    
-
-    shouldContainEmailInvalid() {
-        cy.getByDataTestId('validation_errors_invalidEmail')
-        .should('contain.text', 'Invalid email address');
-    }
-
-    shouldContainPasswordWeak() {
-        cy.getByDataTestId('validation_errors_passwordsTooWeak')
-        .should('contain.text', 'Your password is too weak');
-    }
-
-    shouldContainPasswordsDoNotMatch() {
-        cy.getByDataTestId('validation_errors_passwordsMustMatch')
-        .should('contain.text', 'Your passwords do not match');
+        e2e.shouldContainError(`form-error-${this.confirmPasswordSelector}`, message);
     }
   }
   

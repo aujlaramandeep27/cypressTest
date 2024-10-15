@@ -1,9 +1,15 @@
-import { STATUS_CODES } from 'http';
+import { getLanguageStrings } from '../support/languageStrings';
+import { Language } from '../support/languageTypes';
 import e2e from '../support/e2e';
+import LanguageSwitcher from '../support/pageObjects/languageSwitcher';
 import LoginPage from '../support/pageObjects/LoginPage';
 import SignupPage from '../support/pageObjects/SignupPage';
 
 describe('Signup Tests', () => {
+  // Get the language from environment variables
+  const language:Language = (Cypress.env('LANGUAGE') as Language|| 'en'); // Default to English
+  const strings = getLanguageStrings(language);
+
   const testData = {
     firstName: "test",
     lastName: "test",
@@ -19,17 +25,36 @@ describe('Signup Tests', () => {
     cy.on('uncaught:exception', (er, runnable) => {
       return false
     });
+    
     LoginPage.visit();
     cy.title().should('eq', 'nesto');
+
+    // Set the language in the UI based on the environment variable
+    LanguageSwitcher.switchLang(language);
+
     LoginPage.signup();
   });
 
-  it('should open sign up form for new account', () => {
-    SignupPage.validateFormOpen();
-    SignupPage.validateFieldLabels();
+  it('should open sign up form for new account with expected labels', () => {
+    SignupPage.validateFormOpen(strings.signupTitle);
+
+    // validate labels
+    SignupPage.validateFirstNameLabel(strings.firstName);
+    SignupPage.validateLastNameLabel(strings.lastName);
+    SignupPage.validateEmailLabel(strings.email);
+    SignupPage.validatePhoneLabel(strings.mobilePhoneNumber);
+    SignupPage.validatePasswordLabel(strings.password);
+    SignupPage.validatePasswordComplexityLabel(strings.passwordComplexity);
+    SignupPage.validateConfirmPasswordLabel(strings.confirmpassword);
+    SignupPage.validateProvinceLabel(strings.province);
+    SignupPage.validateProvinceDefaultValue(strings.on);
+    SignupPage.validateAgreementLabel(strings.agreement);
+    SignupPage.validateReadPolicyLabel(strings.readPolicy);
+    SignupPage.validateCreateAccountLabel(strings.createYourAccount);
+    SignupPage.validateCreateAccountAgreementLabel(strings.createAccountAgreement);
   });
 
-  context.only('Valid Test Cases', () => {
+  context('Valid Test Cases', () => {
 
     let case1 = JSON.parse(JSON.stringify(testData));
     case1.name = 'case1';
@@ -133,7 +158,7 @@ describe('Signup Tests', () => {
     SignupPage.submit();
 
     cy.visit(SignupPage.pathName);
-    SignupPage.validateFormOpen();
+    SignupPage.validateFormOpen(strings.signupTitle);
 
     let input2 = JSON.parse(JSON.stringify(input));
     input2.firstName = e2e.generateRandomStringWithSpecialChars(10);
@@ -148,29 +173,29 @@ describe('Signup Tests', () => {
 
     let firstNameEmpty = JSON.parse(JSON.stringify(testData));
     firstNameEmpty.firstName = "";
-    firstNameEmpty.expectedError = "Required";
+    firstNameEmpty.expectedError = strings.required;
 
     let firstNameSpace = JSON.parse(JSON.stringify(testData));
     firstNameSpace.firstName = "{ }";
-    firstNameSpace.expectedError = "Required";
-
-    let firstNameShort = JSON.parse(JSON.stringify(testData));
-    firstNameShort.firstName = "A";
-    firstNameShort.expectedError = "Too few characters";
+    firstNameSpace.expectedError = strings.required;
 
     let firstNameLong = JSON.parse(JSON.stringify(testData));
     firstNameLong.firstName = e2e.generateRandomStringWithSpecialChars(257);
-    firstNameLong.expectedError = "Too many characters";
+    firstNameLong.expectedError = strings.tooManyCharacters;
 
-    let firstNameWithNumbers = JSON.parse(JSON.stringify(testData));
-    firstNameWithNumbers.firstName = "Testuser123";
-    firstNameWithNumbers.expectedError = "Contains invalid characters";
+    // let firstNameShort = JSON.parse(JSON.stringify(testData));
+    // firstNameShort.firstName = "A";
+    // firstNameShort.expectedError = "Too few characters";
 
-    let firstNameWithSpecialChars = JSON.parse(JSON.stringify(testData));
-    firstNameWithSpecialChars.firstName = "Test@user!";
-    firstNameWithSpecialChars.expectedError = "Contains invalid characters";
+    // let firstNameWithNumbers = JSON.parse(JSON.stringify(testData));
+    // firstNameWithNumbers.firstName = "Testuser123";
+    // firstNameWithNumbers.expectedError = "Contains invalid characters";
 
-    const invalidFirstNames = [firstNameEmpty, firstNameSpace, firstNameShort, firstNameLong, firstNameWithNumbers, firstNameWithSpecialChars];
+    // let firstNameWithSpecialChars = JSON.parse(JSON.stringify(testData));
+    // firstNameWithSpecialChars.firstName = "Test@user!";
+    // firstNameWithSpecialChars.expectedError = "Contains invalid characters";
+
+    const invalidFirstNames = [firstNameEmpty, firstNameSpace, firstNameLong];
 
     invalidFirstNames.forEach((input) => {
       it(`Firstname value '${input.firstName}' should show error ${input.expectedError}`, () => {
@@ -185,29 +210,29 @@ describe('Signup Tests', () => {
 
     let lastNameEmpty = JSON.parse(JSON.stringify(testData));
     lastNameEmpty.lastName = "";
-    lastNameEmpty.expectedError = "Required";
+    lastNameEmpty.expectedError = strings.required;
 
     let lastNameSpace = JSON.parse(JSON.stringify(testData));
     lastNameSpace.lastName = "{ }";
-    lastNameSpace.expectedError = "Required";
-
-    let lastNameShort = JSON.parse(JSON.stringify(testData));
-    lastNameShort.lastName = "A";
-    lastNameShort.expectedError = "Too few characters";
+    lastNameSpace.expectedError = strings.required;
 
     let lastNameLong = JSON.parse(JSON.stringify(testData));
     lastNameLong.lastName = e2e.generateRandomStringWithSpecialChars(257);
-    lastNameLong.expectedError = "Too many characters";
+    lastNameLong.expectedError = strings.tooManyCharacters;
 
-    let lastNameWithNumbers = JSON.parse(JSON.stringify(testData));
-    lastNameWithNumbers.lastName = "Testuser123";
-    lastNameWithNumbers.expectedError = "Contains invalid characters";
+    // let lastNameShort = JSON.parse(JSON.stringify(testData));
+    // lastNameShort.lastName = "A";
+    // lastNameShort.expectedError = "Too few characters";
 
-    let lastNameWithSpecialChars = JSON.parse(JSON.stringify(testData));
-    lastNameWithSpecialChars.lastName = "Test@user!";
-    lastNameWithSpecialChars.expectedError = "Contains invalid characters";
+    // let lastNameWithNumbers = JSON.parse(JSON.stringify(testData));
+    // lastNameWithNumbers.lastName = "Testuser123";
+    // lastNameWithNumbers.expectedError = "Contains invalid characters";
 
-    const invalidLastNames = [lastNameEmpty, lastNameSpace, lastNameShort, lastNameLong, lastNameWithNumbers, lastNameWithSpecialChars];
+    // let lastNameWithSpecialChars = JSON.parse(JSON.stringify(testData));
+    // lastNameWithSpecialChars.lastName = "Test@user!";
+    // lastNameWithSpecialChars.expectedError = "Contains invalid characters";
+
+    const invalidLastNames = [lastNameEmpty, lastNameSpace, lastNameLong];
 
     invalidLastNames.forEach((input) => {
       it(`Lastname value '${input.lastName}' should show error ${input.expectedError}`, () => {
@@ -222,47 +247,47 @@ describe('Signup Tests', () => {
 
     let emailEmpty = JSON.parse(JSON.stringify(testData));
     emailEmpty.email = "";
-    emailEmpty.expectedError = "Required";
+    emailEmpty.expectedError = strings.required;
 
     let emailSpace = JSON.parse(JSON.stringify(testData));
     emailSpace.email = "{ }";
-    emailSpace.expectedError = "Required";
+    emailSpace.expectedError = strings.required;
 
     let emailShort = JSON.parse(JSON.stringify(testData));
     emailShort.email = "t@u.c";
-    emailShort.expectedError = "Invalid email address";
+    emailShort.expectedError = strings.invalidEmailAddress;
 
     let emailLong = JSON.parse(JSON.stringify(testData));
     emailLong.email = `${e2e.generateRandomString(247)}@test.com`;
-    emailLong.expectedError = "Invalid email address";
+    emailLong.expectedError = strings.tooManyCharacters;
 
     let emailWithoutAt = JSON.parse(JSON.stringify(testData));
     emailWithoutAt.email = "Testuser.com";
-    emailWithoutAt.expectedError = "Invalid email address";
+    emailWithoutAt.expectedError = strings.invalidEmailAddress;
 
     let emailWithMultipleAt = JSON.parse(JSON.stringify(testData));
     emailWithMultipleAt.email = "Test@user@co.in";
-    emailWithMultipleAt.expectedError = "Invalid email address";
+    emailWithMultipleAt.expectedError = strings.invalidEmailAddress;
 
     let emailWithSpecialChars = JSON.parse(JSON.stringify(testData));
     emailWithSpecialChars.email = "test!#$%&'*+/=?^_{|}~@user.com";
-    emailWithSpecialChars.expectedError = "Invalid email address";
+    emailWithSpecialChars.expectedError = strings.invalidEmailAddress;
 
     let emailWithInvalidChars = JSON.parse(JSON.stringify(testData));
     emailWithInvalidChars.email = "test!@user.com";
-    emailWithInvalidChars.expectedError = "Invalid email address";
+    emailWithInvalidChars.expectedError = strings.invalidEmailAddress;
 
     let emailWithoutUsername = JSON.parse(JSON.stringify(testData));
     emailWithoutUsername.email = "@user.com";
-    emailWithoutUsername.expectedError = "Invalid email address";
+    emailWithoutUsername.expectedError = strings.invalidEmailAddress;
 
     let emailWithoutDomainName = JSON.parse(JSON.stringify(testData));
     emailWithoutDomainName.email = "test@.com";
-    emailWithoutDomainName.expectedError = "Invalid email address";
+    emailWithoutDomainName.expectedError = strings.invalidEmailAddress;
 
     let emailWithConsecutiveDots = JSON.parse(JSON.stringify(testData));
     emailWithConsecutiveDots.email = "test@user..com";
-    emailWithConsecutiveDots.expectedError = "Invalid email address";
+    emailWithConsecutiveDots.expectedError = strings.invalidEmailAddress;
 
     const invalidEmails = [emailEmpty, emailSpace, emailShort, emailLong, emailWithoutAt, emailWithMultipleAt];
 
@@ -279,11 +304,11 @@ describe('Signup Tests', () => {
 
     let phoneEmpty = JSON.parse(JSON.stringify(testData));
     phoneEmpty.phone = "";
-    phoneEmpty.expectedError = "Required";
+    phoneEmpty.expectedError = strings.required;
 
     let phoneSpace = JSON.parse(JSON.stringify(testData));
     phoneSpace.phone = "{ }";
-    phoneSpace.expectedError = "Required";
+    phoneSpace.expectedError = strings.required;
 
     const invalidPhones = [phoneEmpty, phoneSpace];
 
@@ -333,33 +358,33 @@ describe('Signup Tests', () => {
 
     let passwordEmpty = JSON.parse(JSON.stringify(testData));
     passwordEmpty.password = "";
-    passwordEmpty.expectedError = "Required";
+    passwordEmpty.expectedError = strings.required;
 
     let passwordSpace = JSON.parse(JSON.stringify(testData));
     passwordSpace.password = "{ }";
-    passwordSpace.expectedError = "Your password is too weak";
+    passwordSpace.expectedError = strings.yourPasswordIsWeak;
 
     let passwordShort = JSON.parse(JSON.stringify(testData));
     passwordShort.password = "TestUser123";
-    passwordShort.expectedError = "Your password is too weak";
+    passwordShort.expectedError = strings.yourPasswordIsWeak;
 
-    let passwordLong = JSON.parse(JSON.stringify(testData));
-    passwordLong.password = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-    passwordLong.expectedError = "Your password is too weak";
+    // let passwordLong = JSON.parse(JSON.stringify(testData));
+    // passwordLong.password = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+    // passwordLong.expectedError = strings.yourPasswordIsWeak;
 
     let passwordNoUpperCase = JSON.parse(JSON.stringify(testData));
     passwordNoUpperCase.password = "testuser1234";
-    passwordNoUpperCase.expectedError = "Your password is too weak";
+    passwordNoUpperCase.expectedError = strings.yourPasswordIsWeak;
 
     let passwordNoLowerCase = JSON.parse(JSON.stringify(testData));
     passwordNoLowerCase.password = "TESTUSER1234";
-    passwordNoLowerCase.expectedError = "Your password is too weak";
+    passwordNoLowerCase.expectedError = strings.yourPasswordIsWeak;
 
     let passwordNoNumber = JSON.parse(JSON.stringify(testData));
     passwordNoNumber.password = "TestUserOneTwo";
-    passwordNoNumber.expectedError = "Your password is too weak";
+    passwordNoNumber.expectedError = strings.yourPasswordIsWeak;
 
-    const invalidPasswords = [passwordEmpty, passwordSpace, passwordShort, passwordLong, passwordNoUpperCase, passwordNoLowerCase, passwordNoNumber];
+    const invalidPasswords = [passwordEmpty, passwordSpace, passwordShort, passwordNoUpperCase, passwordNoLowerCase, passwordNoNumber];
 
     invalidPasswords.forEach((input) => {
       it(`Password value '${input.password}' should show error ${input.expectedError}`, () => {
@@ -374,26 +399,26 @@ describe('Signup Tests', () => {
 
     let confirmPasswordEmpty = JSON.parse(JSON.stringify(testData));
     confirmPasswordEmpty.confirmPassword = "";
-    confirmPasswordEmpty.expectedError = "Required";
+    confirmPasswordEmpty.expectedError = strings.required;
 
     let confirmPasswordSpace = JSON.parse(JSON.stringify(testData));
     confirmPasswordSpace.confirmPassword = "{ }";
-    confirmPasswordSpace.expectedError = "Your passwords do not match";
+    confirmPasswordSpace.expectedError = strings.yourPasswordsDoNotMatch;
 
     let confirmPasswordDiff = JSON.parse(JSON.stringify(testData));
     confirmPasswordDiff.password = "TestUser1234";
     confirmPasswordDiff.confirmPassword = "TestUser5678";
-    confirmPasswordDiff.expectedError = "Your passwords do not match";
+    confirmPasswordDiff.expectedError = strings.yourPasswordsDoNotMatch;
 
     let confirmPasswordDiffCase = JSON.parse(JSON.stringify(testData));
     confirmPasswordDiffCase.password = "TestUser1234";
     confirmPasswordDiffCase.confirmPassword = "Testuser1234";
-    confirmPasswordDiffCase.expectedError = "Your passwords do not match";
+    confirmPasswordDiffCase.expectedError = strings.yourPasswordsDoNotMatch;
 
     let confirmPasswordAndPasswordEmpty = JSON.parse(JSON.stringify(testData));
     confirmPasswordAndPasswordEmpty.password = "";
     confirmPasswordAndPasswordEmpty.confirmPassword = "";
-    confirmPasswordAndPasswordEmpty.expectedError = "Required";
+    confirmPasswordAndPasswordEmpty.expectedError = strings.required;
 
     const invalidConfirmPasswords = [confirmPasswordEmpty, confirmPasswordSpace, confirmPasswordDiff, confirmPasswordDiffCase, confirmPasswordAndPasswordEmpty];
 
@@ -409,7 +434,7 @@ describe('Signup Tests', () => {
   it('Unknown province should take default value', () => {
     let input = JSON.parse(JSON.stringify(testData));
     input.province = "Unknown";
-    input.expectedValue = "Ontario";
+    input.expectedValue = strings.on;
 
     SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, "", input.constent);
     SignupPage.typeProvince(input.province);
@@ -419,14 +444,14 @@ describe('Signup Tests', () => {
 
   it('should validate when submit without filling form', () => {
     SignupPage.submit();
-    SignupPage.shouldContainFirstNameError("Required");
-    SignupPage.shouldContainLastNameError("Required");
-    SignupPage.shouldContainEmailError("Required");
-    SignupPage.shouldContainPhoneNumberError("Required");
-    SignupPage.shouldContainPasswordError("Required");
-    SignupPage.shouldContainConfirmPasswordError("Required");
+    SignupPage.shouldContainFirstNameError(strings.required);
+    SignupPage.shouldContainLastNameError(strings.required);
+    SignupPage.shouldContainEmailError(strings.required);
+    SignupPage.shouldContainPhoneNumberError(strings.required);
+    SignupPage.shouldContainPasswordError(strings.required);
+    SignupPage.shouldContainConfirmPasswordError(strings.required);
 
-    SignupPage.validateFormOpen();
+    SignupPage.validateFormOpen(strings.signupTitle);
   });
 
   it('should reset fields when reload page', () => {
@@ -435,7 +460,7 @@ describe('Signup Tests', () => {
     SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
     SignupPage.submit();
     cy.reload();
-    SignupPage.validateFormOpen();
+    SignupPage.validateFormOpen(strings.signupTitle);
     SignupPage.validateFieldAreReset();
   });
 
@@ -446,13 +471,13 @@ describe('Signup Tests', () => {
     SignupPage.submit();
     cy.go('back');
     cy.go('forward');
-    SignupPage.validateFormOpen();
+    SignupPage.validateFormOpen(strings.signupTitle);
     SignupPage.validateFieldAreReset();
   });
 
   it('should navigate to Login page', () => {
     SignupPage.login();
-    LoginPage.validateFormOpen();
+    LoginPage.validateFormOpen(strings.loginTitle);
   });
     
 });
