@@ -5,16 +5,17 @@ class LanguageSwitcher {
     private languageSelector = 'toggle-language';
   
     switchLang(language: Language){
+        const lang = language.toUpperCase();
+
         e2e.getByTestId(this.languageSelector).then(($button) => {
             if($button.length){
                 cy.wrap($button).invoke('text').then((text) => {
-                    if(language == text){
+                    if(lang == text){
                         cy.wrap($button).click();
                     }
                 })
             }
         })
-
     }
 }
 

@@ -7,7 +7,7 @@ import SignupPage from '../support/pageObjects/SignupPage';
 
 describe('Signup Tests', () => {
   // Get the language from environment variables
-  const language:Language = (Cypress.env('LANGUAGE') as Language|| 'en'); // Default to English
+  const language:Language = (Cypress.env('LANGUAGE') as Language|| 'fr'); // Default to English
   const strings = getLanguageStrings(language);
 
   const testData = {
@@ -17,12 +17,12 @@ describe('Signup Tests', () => {
     phone: "1234567890",
     password: "TestUser1234",
     confirmPassword: "TestUser123",
-    province: "Quebec",
+    province: strings.qc,
     constent: "false"
   };
 
   beforeEach(() => {
-    cy.on('uncaught:exception', (er, runnable) => {
+    cy.on('uncaught:exception', (err, runnable) => {
       return false
     });
     
@@ -75,7 +75,7 @@ describe('Signup Tests', () => {
     case2.lastName = `^Céleste-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case2.email = `${e2e.generateRandomString(10)}@test.user.com`;
     case2.phone = '123 456 7890';
-    case2.province = "Quebec"
+    case2.province = strings.qc;
     case2.expectedProvince = "QC";
     case2.Consent = "false";
 
@@ -84,7 +84,7 @@ describe('Signup Tests', () => {
     case3.firstName = `^Dré-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case3.lastName = `Émilie-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case3.email = `${e2e.generateRandomString(10)}@test.user.com`;
-    case3.province = "Saskatchewan"
+    case3.province = strings.sk;
     case3.expectedProvince = "SK";
     case3.Consent = "false";
 
@@ -93,7 +93,7 @@ describe('Signup Tests', () => {
     case4.firstName = `^André-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case4.lastName = `^Émilie-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case4.email = `${e2e.generateRandomString(10)}@test.user.com`;
-    case4.province = "Alberta"
+    case4.province = strings.al;
     case4.expectedProvince = "AL";
     case4.Consent = "false";
     
