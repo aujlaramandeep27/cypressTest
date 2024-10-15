@@ -46,12 +46,12 @@ class e2e {
     }
 
     lowercaseExceptFirst(str: string): string {
-        if (str.length === 0) return str; // Handle empty string
+        if (str.length === 0) return str;
         
-        const firstChar = str.charAt(0).toUpperCase(); // Uppercase the first character
-        const restOfString = str.slice(1).toLowerCase(); // Lowercase the rest of the string
+        const firstChar = str.charAt(0).toUpperCase();
+        const restOfString = str.slice(1).toLowerCase();
         
-        return firstChar + restOfString; // Concatenate and return
+        return firstChar + restOfString;
     }
 }
 

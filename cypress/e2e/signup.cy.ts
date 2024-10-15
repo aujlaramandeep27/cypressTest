@@ -7,7 +7,7 @@ import SignupPage from '../support/pageObjects/SignupPage';
 
 describe('Signup Tests', () => {
   // Get the language from environment variables
-  const language:Language = (Cypress.env('LANGUAGE') as Language|| 'fr'); // Default to English
+  const language:Language = (Cypress.env('LANGUAGE') as Language|| 'en'); // Default to English
   const strings = getLanguageStrings(language);
 
   const testData = {
@@ -57,7 +57,7 @@ describe('Signup Tests', () => {
   context('Valid Test Cases', () => {
 
     let case1 = JSON.parse(JSON.stringify(testData));
-    case1.name = 'case1';
+    case1.name = 'names starting with consonants';
     case1.firstName = `Dré-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case1.lastName = `Céleste-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case1.email = `${e2e.generateRandomString(5)}+${e2e.generateRandomString(5)}@test.com`;
@@ -70,7 +70,7 @@ describe('Signup Tests', () => {
     case1.constent = "true";
 
     let case2 = JSON.parse(JSON.stringify(case1));
-    case2.name = 'case2';
+    case2.name = 'names starting with vowel & accent';
     case2.firstName = `André-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case2.lastName = `^Céleste-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case2.email = `${e2e.generateRandomString(10)}@test.user.com`;
@@ -80,7 +80,7 @@ describe('Signup Tests', () => {
     case2.Consent = "false";
 
     let case3 = JSON.parse(JSON.stringify(case1));
-    case3.name = 'case3';
+    case3.name = 'names starting with accent & vowel';
     case3.firstName = `^Dré-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case3.lastName = `Émilie-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case3.email = `${e2e.generateRandomString(10)}@test.user.com`;
@@ -89,7 +89,7 @@ describe('Signup Tests', () => {
     case3.Consent = "false";
 
     let case4 = JSON.parse(JSON.stringify(case1));
-    case4.name = 'case4';
+    case4.name = 'names starting with accents';
     case4.firstName = `^André-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case4.lastName = `^Émilie-${e2e.generateRandomStringWithSpecialChars(5)}`;
     case4.email = `${e2e.generateRandomString(10)}@test.user.com`;
@@ -172,14 +172,17 @@ describe('Signup Tests', () => {
   context('Invalid First Name Tests', () => {
 
     let firstNameEmpty = JSON.parse(JSON.stringify(testData));
+    firstNameEmpty.name = "empty";
     firstNameEmpty.firstName = "";
     firstNameEmpty.expectedError = strings.required;
 
     let firstNameSpace = JSON.parse(JSON.stringify(testData));
+    firstNameSpace.name = "space";
     firstNameSpace.firstName = "{ }";
     firstNameSpace.expectedError = strings.required;
 
     let firstNameLong = JSON.parse(JSON.stringify(testData));
+    firstNameLong.name = "long"
     firstNameLong.firstName = e2e.generateRandomStringWithSpecialChars(257);
     firstNameLong.expectedError = strings.tooManyCharacters;
 
@@ -198,7 +201,7 @@ describe('Signup Tests', () => {
     const invalidFirstNames = [firstNameEmpty, firstNameSpace, firstNameLong];
 
     invalidFirstNames.forEach((input) => {
-      it(`Firstname value '${input.firstName}' should show error ${input.expectedError}`, () => {
+      it(`Firstname value '${input.name}' should show error ${input.expectedError}`, () => {
         SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
         SignupPage.submit();
         SignupPage.shouldContainFirstNameError(input.expectedError);

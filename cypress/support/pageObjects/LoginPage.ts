@@ -13,7 +13,6 @@ class LoginPage {
 
   signup() {
     e2e.getByTestId('loginPage_signUp')
-    // .contains('span', 'Sign up')
     .click();
   }
 
