@@ -194,8 +194,16 @@ class SignupPage {
         e2e.shouldContainError(`form-error-${this.firstNameSelector}`, message);
     }
 
+    shouldNotContainFirstNameError() {
+        e2e.shouldNotContainError(`form-error-${this.firstNameSelector}`);
+    }
+
     shouldContainLastNameError(message: string) {
         e2e.shouldContainError(`form-error-${this.lastNameSelector}`, message);
+    }
+
+    shouldNotContainLastNameError() {
+        e2e.shouldNotContainError(`form-error-${this.lastNameSelector}`);
     }
 
     shouldContainEmailError(message: string) {
@@ -208,6 +216,10 @@ class SignupPage {
 
     shouldContainPasswordError(message: string) {
         e2e.shouldContainError(`form-error-${this.passwordSelector}`, message);
+    }
+
+    shouldNotContainPasswordError(message: string) {
+        e2e.shouldNotContainError(`form-error-${this.passwordSelector}`);
     }
 
     shouldContainConfirmPasswordError(message: string) {

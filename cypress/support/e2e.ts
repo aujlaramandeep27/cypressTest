@@ -21,6 +21,11 @@ class e2e {
         .contains('span', message);
     }
 
+    shouldNotContainError(testId: string) {
+        cy.get(`[data-test-id="${testId}"]`)
+        .should('not.exist');
+    }
+
     generateRandomString(length: number): string {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let result = '';
