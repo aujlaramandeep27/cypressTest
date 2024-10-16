@@ -8,7 +8,7 @@ import HomePage from '../support/pageObjects/HomePage';
 
 describe('Signup Tests', () => {
   // Get the language from environment variables
-  const language:Language = (Cypress.env('LANGUAGE') as Language|| 'en'); // Default to English
+  const language:Language = (Cypress.env('LANGUAGE') as Language|| 'fr'); // Default to English
   const strings = getLanguageStrings(language);
 
   const testData = {
@@ -80,8 +80,8 @@ describe('Signup Tests', () => {
 
     let firstNameWithVowel = JSON.parse(JSON.stringify(testData));
     firstNameWithVowel.name = 'first name starting with vowel';
-    firstNameWithVowel.firstName = `Ella${e2e.generateRandomStringWithSpecialChars(5)}`;
-    firstNameWithVowel.lastName = `Dré${e2e.generateRandomStringWithSpecialChars(5)}`;
+    firstNameWithVowel.firstName = `Ella${e2e.generateRandomString(5)}`;
+    firstNameWithVowel.lastName = `Dré${e2e.generateRandomString(5)}`;
     firstNameWithVowel.email = `${e2e.generateRandomString(5)}+${e2e.generateRandomString(5)}@test.com`;
     firstNameWithVowel.phone = '1234567890';
     firstNameWithVowel.expectedPhone = '123-456-7890';
@@ -90,11 +90,12 @@ describe('Signup Tests', () => {
     firstNameWithVowel.province = "";
     firstNameWithVowel.expectedProvince = "ON";
     firstNameWithVowel.constent = "true";
+    firstNameWithVowel.expectedConsent = true;
 
     let lastNameWithVowel = JSON.parse(JSON.stringify(testData));
     lastNameWithVowel.name = 'last name starting with vowel';
-    lastNameWithVowel.firstName = `Dré${e2e.generateRandomStringWithSpecialChars(5)}`;
-    lastNameWithVowel.lastName = `Ella${e2e.generateRandomStringWithSpecialChars(5)}`;
+    lastNameWithVowel.firstName = `Dré${e2e.generateRandomString(5)}`;
+    lastNameWithVowel.lastName = `Ella${e2e.generateRandomString(5)}`;
     lastNameWithVowel.email = `${e2e.generateRandomString(5)}+${e2e.generateRandomString(5)}@test.com`;
     lastNameWithVowel.phone = '1234567890';
     lastNameWithVowel.expectedPhone = '123-456-7890';
@@ -103,11 +104,12 @@ describe('Signup Tests', () => {
     lastNameWithVowel.province = "";
     lastNameWithVowel.expectedProvince = "ON";
     lastNameWithVowel.constent = "true";
+    lastNameWithVowel.expectedConsent = true;
 
     let firstNameWithAccent = JSON.parse(JSON.stringify(testData));
     firstNameWithAccent.name = 'first name starting with accent';
-    firstNameWithAccent.firstName = `Émilie${e2e.generateRandomStringWithSpecialChars(5)}`;
-    firstNameWithAccent.lastName = `Ella${e2e.generateRandomStringWithSpecialChars(5)}`;
+    firstNameWithAccent.firstName = `Émilie${e2e.generateRandomString(5)}`;
+    firstNameWithAccent.lastName = `Ella${e2e.generateRandomString(5)}`;
     firstNameWithAccent.email = `${e2e.generateRandomString(10)}@test.com`;
     firstNameWithAccent.phone = '123 456 7890';
     firstNameWithAccent.expectedPhone = '123-456-7890';
@@ -115,17 +117,19 @@ describe('Signup Tests', () => {
     firstNameWithAccent.province = strings.qc;
     firstNameWithAccent.expectedProvince = "QC";
     firstNameWithAccent.Consent = "false";
+    firstNameWithAccent.expectedConsent = false;
 
     let lastNameWithAccent = JSON.parse(JSON.stringify(testData));
     lastNameWithAccent.name = 'last name starting with accent';
-    lastNameWithAccent.firstName = `Ella${e2e.generateRandomStringWithSpecialChars(5)}`;
-    lastNameWithAccent.lastName = `Émilie${e2e.generateRandomStringWithSpecialChars(5)}`;
+    lastNameWithAccent.firstName = `Ella${e2e.generateRandomString(5)}`;
+    lastNameWithAccent.lastName = `Émilie${e2e.generateRandomString(5)}`;
     lastNameWithAccent.email = `${e2e.generateRandomString(10)}@test.com`;
     lastNameWithAccent.expectedPhone = '123-456-7890';
     lastNameWithAccent.confirmPassword = lastNameWithAccent.password;
     lastNameWithAccent.province = strings.sk;
     lastNameWithAccent.expectedProvince = "SK";
     lastNameWithAccent.Consent = "false";
+    lastNameWithAccent.expectedConsent = true;
 
     let firstNameMixedCase = JSON.parse(JSON.stringify(testData));
     firstNameMixedCase.name = 'first name with mixed case';
@@ -137,6 +141,7 @@ describe('Signup Tests', () => {
     firstNameMixedCase.province = strings.al;
     firstNameMixedCase.expectedProvince = "AB";
     firstNameMixedCase.Consent = "false";
+    firstNameMixedCase.expectedConsent = false;
 
     let lastNameMixedCase = JSON.parse(JSON.stringify(testData));
     lastNameMixedCase.name = 'last name with mixed case';
@@ -150,41 +155,69 @@ describe('Signup Tests', () => {
     lastNameMixedCase.province = "";
     lastNameMixedCase.expectedProvince = "ON";
     lastNameMixedCase.constent = "true";
-
-    let nameWithCompounds = JSON.parse(JSON.stringify(testData));
-    nameWithCompounds.name = 'names with compounds';
-    nameWithCompounds.firstName = `Céleste-${e2e.generateRandomStringWithSpecialChars(5)}`;
-    nameWithCompounds.lastName = `Dré-${e2e.generateRandomStringWithSpecialChars(5)}`;
-    nameWithCompounds.email = `${e2e.generateRandomString(10)}#user@test.com`;
-    nameWithCompounds.expectedPhone = '123-456-7890';
-    nameWithCompounds.confirmPassword = nameWithCompounds.password;
-    nameWithCompounds.province = strings.nl;
-    nameWithCompounds.expectedProvince = "NL";
-    nameWithCompounds.Consent = "false";
-
-    let nameWithSpaces = JSON.parse(JSON.stringify(testData));
-    nameWithSpaces.name = 'names with space';
-    nameWithSpaces.firstName = `Frank ${e2e.generateRandomStringWithSpecialChars(5)}`;
-    nameWithSpaces.lastName = `Shelby ${e2e.generateRandomStringWithSpecialChars(5)}`;
-    nameWithSpaces.email = `${e2e.generateRandomString(114)}_user@test.com`;
-    nameWithSpaces.expectedPhone = '123-456-7890';
-    nameWithSpaces.confirmPassword = nameWithSpaces.password;
-    nameWithSpaces.province = strings.pe;
-    nameWithSpaces.expectedProvince = "PE";
-    nameWithSpaces.Consent = "false";
+    lastNameMixedCase.expectedConsent = true;
 
     let longNames = JSON.parse(JSON.stringify(testData));
     longNames.name = 'names with maximum size';
-    longNames.firstName = `Frank${e2e.generateRandomStringWithSpecialChars(59)}`;
-    longNames.lastName = `Shelby${e2e.generateRandomStringWithSpecialChars(58)}`;
+    longNames.firstName = `Frank${e2e.generateRandomString(59)}`;
+    longNames.lastName = `Shelby${e2e.generateRandomString(58)}`;
     longNames.email = `${e2e.generateRandomString(114)}_user@test.com`;
     longNames.expectedPhone = '123-456-7890';
     longNames.confirmPassword = longNames.password;
     longNames.province = strings.ns;
     longNames.expectedProvince = "NS";
     longNames.Consent = "false";
+    longNames.expectedConsent = false;
+
+    let nameWithCompounds = JSON.parse(JSON.stringify(testData));
+    nameWithCompounds.name = 'names with compounds';
+    nameWithCompounds.firstName = `Céleste-${e2e.generateRandomString(5)}`;
+    nameWithCompounds.lastName = `Dré-${e2e.generateRandomString(5)}`;
+    nameWithCompounds.email = `${e2e.generateRandomString(10)}#user@test.com`;
+    nameWithCompounds.expectedPhone = '123-456-7890';
+    nameWithCompounds.confirmPassword = nameWithCompounds.password;
+    nameWithCompounds.province = strings.nl;
+    nameWithCompounds.expectedProvince = "NL";
+    nameWithCompounds.Consent = "false";
+    nameWithCompounds.expectedConsent = false;
+
+    let nameWithSpaces = JSON.parse(JSON.stringify(testData));
+    nameWithSpaces.name = 'names with space';
+    nameWithSpaces.firstName = `Frank ${e2e.generateRandomString(5)}`;
+    nameWithSpaces.lastName = `Shelby ${e2e.generateRandomString(5)}`;
+    nameWithSpaces.email = `${e2e.generateRandomString(114)}_user@test.com`;
+    nameWithSpaces.expectedPhone = '123-456-7890';
+    nameWithSpaces.confirmPassword = nameWithSpaces.password;
+    nameWithSpaces.province = strings.pe;
+    nameWithSpaces.expectedProvince = "PE";
+    nameWithSpaces.Consent = "false";
+    nameWithSpaces.expectedConsent = false;
+
+    let firstNameSecondWordAccent = JSON.parse(JSON.stringify(testData));
+    firstNameSecondWordAccent.name = 'first name with space second word starts with accent';
+    firstNameSecondWordAccent.firstName = `Frank É${e2e.generateRandomString(5)}`;
+    firstNameSecondWordAccent.lastName = `Shelby ${e2e.generateRandomString(5)}`;
+    firstNameSecondWordAccent.email = `${e2e.generateRandomString(114)}_user@test.com`;
+    firstNameSecondWordAccent.expectedPhone = '123-456-7890';
+    firstNameSecondWordAccent.confirmPassword = firstNameSecondWordAccent.password;
+    firstNameSecondWordAccent.province = strings.pe;
+    firstNameSecondWordAccent.expectedProvince = "PE";
+    firstNameSecondWordAccent.Consent = "false";
+    firstNameSecondWordAccent.expectedConsent = false;
+
+    let lastNameSecondWordAccent = JSON.parse(JSON.stringify(testData));
+    lastNameSecondWordAccent.name = 'last name with space second word starts with accent';
+    lastNameSecondWordAccent.firstName = `Frank ${e2e.generateRandomString(5)}`;
+    lastNameSecondWordAccent.lastName = `Shelby É${e2e.generateRandomString(5)}`;
+    lastNameSecondWordAccent.email = `${e2e.generateRandomString(114)}_user@test.com`;
+    lastNameSecondWordAccent.expectedPhone = '123-456-7890';
+    lastNameSecondWordAccent.confirmPassword = lastNameSecondWordAccent.password;
+    lastNameSecondWordAccent.province = strings.pe;
+    lastNameSecondWordAccent.expectedProvince = "PE";
+    lastNameSecondWordAccent.Consent = "false";
+    lastNameSecondWordAccent.expectedConsent = false;
     
-    const validCases = [firstNameWithVowel, lastNameWithVowel, firstNameWithAccent, lastNameWithAccent, firstNameMixedCase, lastNameMixedCase, nameWithCompounds, nameWithSpaces, longNames];
+    const validCases = [firstNameWithVowel, lastNameWithVowel, firstNameWithAccent, lastNameWithAccent, firstNameMixedCase, lastNameMixedCase, longNames, nameWithCompounds, nameWithSpaces, firstNameSecondWordAccent, lastNameSecondWordAccent];
 
     validCases.forEach((input) => {
       it(`Valid case '${input.name}' should be successful`, () => {
@@ -200,9 +233,12 @@ describe('Signup Tests', () => {
               password: req.body.password,
               passwordConfirm: req.body.passwordConfirm,
               province: req.body.province,
-              consent: req.body.consent,
-            },
+              consent: req.body.leadDistributeConsentAgreement,
+            }
           });
+          // req.reply((res) => {
+          //   cy.log('Full response: '+ res);
+          // });
         }).as(`${input.name}`);
         
         SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
@@ -214,7 +250,6 @@ describe('Signup Tests', () => {
           expect(response?.statusCode).to.eq(201);
     
           // Assert the response body
-          cy.log(response.body);
           expect(response?.body).to.have.property('firstName', e2e.capitalizeFirstLetterOfEachWord(input.firstName));
           expect(response?.body).to.have.property('lastName', e2e.capitalizeFirstLetterOfEachWord(input.lastName))
           expect(response?.body).to.have.property('email', input.email);
@@ -222,7 +257,7 @@ describe('Signup Tests', () => {
           expect(response?.body).to.have.property('password', input.password);
           expect(response?.body).to.have.property('passwordConfirm', input.confirmPassword);
           expect(response?.body).to.have.property('province', input.expectedProvince);
-          // TODO consent agreement validation
+          expect(response?.body).to.have.property('consent', input.expectedConsent);
         });
       });
 
