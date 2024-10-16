@@ -4,6 +4,7 @@ import e2e from '../support/e2e';
 import LanguageSwitcher from '../support/pageObjects/languageSwitcher';
 import LoginPage from '../support/pageObjects/LoginPage';
 import SignupPage from '../support/pageObjects/SignupPage';
+import HomePage from '../support/pageObjects/HomePage';
 
 describe('Signup Tests', () => {
   // Get the language from environment variables
@@ -52,6 +53,27 @@ describe('Signup Tests', () => {
     SignupPage.validateReadPolicyLabel(strings.readPolicy);
     SignupPage.validateCreateAccountLabel(strings.createYourAccount);
     SignupPage.validateCreateAccountAgreementLabel(strings.createAccountAgreement);
+  });
+
+  it('Successful signup for new account', () => {
+    let input = JSON.parse(JSON.stringify(testData));
+    input.firstName = 'Test';
+    input.lastName = 'User';
+    input.email = `${e2e.generateRandomString(5)}+${e2e.generateRandomString(5)}@test.com`;
+    input.phone = '1234567890';
+    input.expectedPhone = '123-456-7890';
+    input.password = 'TestUser@1234';
+    input.confirmPassword = input.password;
+    input.province = "";
+    input.expectedProvince = "ON";
+    input.constent = "";
+
+    SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+    SignupPage.submit();
+
+    // Validate user successfully logged in on account creation
+    HomePage.validateHomeOpen(strings.homeTitle);
+    HomePage.logout();
   });
 
   context('Valid Test Cases', () => {
@@ -140,6 +162,17 @@ describe('Signup Tests', () => {
     nameWithCompounds.expectedProvince = "NL";
     nameWithCompounds.Consent = "false";
 
+    let nameWithSpaces = JSON.parse(JSON.stringify(testData));
+    nameWithSpaces.name = 'names with space';
+    nameWithSpaces.firstName = `Frank ${e2e.generateRandomStringWithSpecialChars(5)}`;
+    nameWithSpaces.lastName = `Shelby ${e2e.generateRandomStringWithSpecialChars(5)}`;
+    nameWithSpaces.email = `${e2e.generateRandomString(114)}_user@test.com`;
+    nameWithSpaces.expectedPhone = '123-456-7890';
+    nameWithSpaces.confirmPassword = nameWithSpaces.password;
+    nameWithSpaces.province = strings.pe;
+    nameWithSpaces.expectedProvince = "PE";
+    nameWithSpaces.Consent = "false";
+
     let longNames = JSON.parse(JSON.stringify(testData));
     longNames.name = 'names with maximum size';
     longNames.firstName = `Frank${e2e.generateRandomStringWithSpecialChars(59)}`;
@@ -151,7 +184,7 @@ describe('Signup Tests', () => {
     longNames.expectedProvince = "NS";
     longNames.Consent = "false";
     
-    const validCases = [firstNameWithVowel, lastNameWithVowel, firstNameWithAccent, lastNameWithAccent, firstNameMixedCase, lastNameMixedCase, nameWithCompounds, longNames];
+    const validCases = [firstNameWithVowel, lastNameWithVowel, firstNameWithAccent, lastNameWithAccent, firstNameMixedCase, lastNameMixedCase, nameWithCompounds, nameWithSpaces, longNames];
 
     validCases.forEach((input) => {
       it(`Valid case '${input.name}' should be successful`, () => {
@@ -182,8 +215,8 @@ describe('Signup Tests', () => {
     
           // Assert the response body
           cy.log(response.body);
-          expect(response?.body).to.have.property('firstName', e2e.lowercaseExceptFirst(input.firstName));
-          expect(response?.body).to.have.property('lastName', e2e.lowercaseExceptFirst(input.lastName))
+          expect(response?.body).to.have.property('firstName', e2e.capitalizeFirstLetterOfEachWord(input.firstName));
+          expect(response?.body).to.have.property('lastName', e2e.capitalizeFirstLetterOfEachWord(input.lastName))
           expect(response?.body).to.have.property('email', input.email);
           expect(response?.body).to.have.property('phone', input.expectedPhone);
           expect(response?.body).to.have.property('password', input.password);
@@ -192,6 +225,7 @@ describe('Signup Tests', () => {
           // TODO consent agreement validation
         });
       });
+
     });
   });
 
@@ -416,11 +450,7 @@ describe('Signup Tests', () => {
     });
   });
 
-  context('Non numeric Phone Number Tests', () => {
-
-    let phoneShort = JSON.parse(JSON.stringify(testData));
-    phoneShort.phone = "1";
-    phoneShort.expectedValue = "1__-___-____";
+  context('Parse Phone Number Tests', () => {
 
     let phoneLong = JSON.parse(JSON.stringify(testData));
     phoneLong.phone = "98765432012";
@@ -431,24 +461,46 @@ describe('Signup Tests', () => {
     phoneWithSpaces.expectedValue = "987-654-3201";
 
     let phoneWithLetters = JSON.parse(JSON.stringify(testData));
-    phoneWithLetters.phone = "1234ABC890";
-    phoneWithLetters.expectedValue = "123-489-0___";
+    phoneWithLetters.phone = "1234ABC890456";
+    phoneWithLetters.expectedValue = "123-489-0456";
 
     let phoneWithInvalidChars = JSON.parse(JSON.stringify(testData));
-    phoneWithInvalidChars.phone = "123#456789";
-    phoneWithInvalidChars.expectedValue = "123-456-789_";
+    phoneWithInvalidChars.phone = "123#4567890";
+    phoneWithInvalidChars.expectedValue = "123-456-7890";
 
     let phoneWithInvalidFormat = JSON.parse(JSON.stringify(testData));
     phoneWithInvalidFormat.phone = "123/456/7890";
     phoneWithInvalidFormat.expectedValue = "123-456-7890";
 
-    const phoneCases = [phoneShort, phoneLong, phoneWithSpaces, phoneWithLetters, phoneWithInvalidChars, phoneWithInvalidFormat];
+    const phoneCases = [phoneLong, phoneWithSpaces, phoneWithLetters, phoneWithInvalidChars, phoneWithInvalidFormat];
 
     phoneCases.forEach((input) => {
       it(`Phone number value '${input.phone}' should accept value ${input.expectedValue}`, () => {
         SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
         SignupPage.submit();
         SignupPage.shouldHavePhoneNumber(input.expectedValue);
+      });
+    });
+  });
+
+  context('Invalid accepted Phone Number Tests', () => {
+
+    let phoneShort = JSON.parse(JSON.stringify(testData));
+    phoneShort.phone = "1";
+    phoneShort.expectedValue = "1__-___-____";
+
+    let phoneBelowMinimum = JSON.parse(JSON.stringify(testData));
+    phoneBelowMinimum.phone = "123456789";
+    phoneBelowMinimum.expectedValue = "123-456-789_";
+
+    const phoneCases = [phoneShort, phoneBelowMinimum];
+
+    phoneCases.forEach((input) => {
+      it(`Phone number value '${input.phone}' should accept value ${input.expectedValue}`, () => {
+        SignupPage.fillForm(input.firstName, input.lastName, input.email, input.phone, input.password, input.confirmPassword, input.province, input.constent);
+        SignupPage.submit();
+        SignupPage.shouldHavePhoneNumber(input.expectedValue);
+        SignupPage.shouldNotContainPhoneNumberError();
       });
     });
   });

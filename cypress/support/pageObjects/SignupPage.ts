@@ -214,6 +214,10 @@ class SignupPage {
         e2e.shouldContainError(`form-error-${this.phoneSelector}`, message);
     }
 
+    shouldNotContainPhoneNumberError() {
+        e2e.shouldNotContainError(`form-error-${this.phoneSelector}`);
+    }
+
     shouldContainPasswordError(message: string) {
         e2e.shouldContainError(`form-error-${this.passwordSelector}`, message);
     }

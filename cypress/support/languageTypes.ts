@@ -5,6 +5,8 @@ export interface LanguageStrings {
     loginTitle: string;
     signUp: string;
     signupTitle: string;
+    homeTitle: string;
+    logout: string;
     firstName: string;
     lastName: string;
     email: string;

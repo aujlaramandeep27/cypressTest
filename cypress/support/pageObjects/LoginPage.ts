@@ -1,6 +1,10 @@
 import e2e from '../e2e';
 
 class LoginPage {
+  private titleSelector = 'cardComponent_undefined';
+  private logoSelector = 'nestoSecured';
+  private signupLinkSelector = 'loginPage_signUp';
+
   readonly pathName : string;
 
   constructor(pathName: string) {
@@ -12,7 +16,7 @@ class LoginPage {
   }
 
   signup() {
-    e2e.getByTestId('loginPage_signUp')
+    e2e.getByTestId(this.signupLinkSelector)
     .click();
   }
 
@@ -20,11 +24,11 @@ class LoginPage {
     cy.location("pathname").should("equal", this.pathName)
 
     // Log in to your nesto account form
-    e2e.getByTestId('cardComponent_undefined')
+    e2e.getByTestId(this.titleSelector)
     .should('contain', title);
 
     // Logo
-    e2e.getByTestId('nestoSecured').should('be.visible');
+    e2e.getByTestId(this.logoSelector).should('be.visible');
   }
 }
   

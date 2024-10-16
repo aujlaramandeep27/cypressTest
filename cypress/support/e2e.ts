@@ -50,13 +50,10 @@ class e2e {
         return result;
     }
 
-    lowercaseExceptFirst(str: string): string {
+    capitalizeFirstLetterOfEachWord(str: string): string {
         if (str.length === 0) return str;
         
-        const firstChar = str.charAt(0).toUpperCase();
-        const restOfString = str.slice(1).toLowerCase();
-        
-        return firstChar + restOfString;
+        return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
     }
 }
 
