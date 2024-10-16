@@ -1,17 +1,15 @@
 # Nesto
 
-## Automated UI tests using Cypress with Typescript
+Automated UI test script using **Cypress** with **Typescript** to test **Signup Functionality**
 
-### Signup Functionality
+## Covered following cases:
+1. Positive Cases
+2. Negative Cases
+3. Label Validations
+4. Field Validations
+5. Navigation validations
+6. **API** response validation for succesfull account creation
+7. Ability to run against selected **language** (English or French) and against English by **default**
+8. Handled uncaught third party api **exceptions**
 
-### **Positive** and **Negative** test cases
-
-### Added coverage for labels and fields
-
-### Validated that the **API** for the account creation returns **201** status code and response body contains the entered information in the form
-
-### Ability to run your test suite against selected language (**English** or **French**) and against **English** by default.
-
-### Ignored third part api errors
-
-### Created **test plan** and **bugs report** for discovered bugs in *Google Doc*
+Created **Test Plan** and **Bugs Report** for discovered bugs in **Google Doc**
