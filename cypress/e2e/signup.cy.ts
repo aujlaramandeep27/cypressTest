@@ -24,7 +24,8 @@ describe('Signup Tests', () => {
 
   beforeEach(() => {
     cy.on('uncaught:exception', (err, runnable) => {
-      return false
+      console.error('Uncaught exception:', err);
+      return false;
     });
     
     LoginPage.visit();
