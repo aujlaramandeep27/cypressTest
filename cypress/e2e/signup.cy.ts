@@ -8,7 +8,7 @@ import HomePage from '../support/pageObjects/HomePage';
 
 describe('Signup Tests', () => {
   // Get the language from environment variables
-  const language:Language = (Cypress.env('LANGUAGE') as Language|| 'fr'); // Default to English
+  const language:Language = (Cypress.env('LANGUAGE') as Language|| 'en'); // Default to English
   const strings = getLanguageStrings(language);
 
   const testData = {

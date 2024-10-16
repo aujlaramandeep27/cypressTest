@@ -1,13 +1,17 @@
-Used Cypress with Typescript to test Signup Page for Nesto
+# Nesto
 
-Automated positive and negative test cases
+## Automated UI tests using Cypress with Typescript
 
-Added coverage for labels and fields
+### Signup Functionality
 
-Validated that the API for the account creation returns 201 status code and response body contains the entered information in the form
+### **Positive** and **Negative** test cases
 
-Ability to run your test suite against selected language (English or French)
+### Added coverage for labels and fields
 
-Use typescript in cypress if you have experience (is a bonus)
+### Validated that the **API** for the account creation returns **201** status code and response body contains the entered information in the form
 
-Created test plan and bugs report for discovered bugs in Google Doc
+### Ability to run your test suite against selected language (**English** or **French**) and against **English** by default.
+
+### Ignored third part api errors
+
+### Created **test plan** and **bugs report** for discovered bugs in *Google Doc*
