@@ -1,6 +1,6 @@
 # Nesto
 
-Automated UI test script using **Cypress** with **Typescript** to test **Signup Functionality**
+Automated UI test script using **Cypress** with **Typescript** to test **Signup Functionality**.
 This project is a boilerplate for end-to-end testing using Cypress with TypeScript. It provides a structured setup to help you get started quickly.
 
 ## Covered following cases:
@@ -41,7 +41,6 @@ Before you begin, ensure you have the following installed:
 
 2. Install the project dependencies:
 
-    ```bash
     npm install
 
 ## Project Structure
@@ -62,7 +61,6 @@ The project follows a simple structure:
 
 To open the Cypress Test Runner, run the following command:
     
-    ```bash
     npm run cypress:open
 
 This will launch the Cypress GUI, where you can run tests interactively.
@@ -71,7 +69,6 @@ This will launch the Cypress GUI, where you can run tests interactively.
 
 To run tests in headless mode, execute:
     
-    ```bash
     npm run cypress:run
 
 ## Writing Tests
