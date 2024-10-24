@@ -41,6 +41,7 @@ Before you begin, ensure you have the following installed:
 
 2. Install the project dependencies:
 
+    ```bash
     npm install
 
 ## Project Structure
