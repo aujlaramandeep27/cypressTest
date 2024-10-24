@@ -1,7 +1,7 @@
 # Nesto
 
-Automated UI test script using **Cypress** with **Typescript** to test **Signup Functionality**.
-This project is a boilerplate for end-to-end testing using Cypress with TypeScript. It provides a structured setup to help you get started quickly.
+Automated UI test script for **Signup Functionality**.
+This project is a boilerplate for end-to-end testing using **Cypress** with **Typescript**. It provides a structured setup to help you get started quickly.
 
 ## Covered following cases:
 1. Positive cases
